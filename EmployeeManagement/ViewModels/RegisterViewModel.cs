@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EmployeeManagement.Utilities;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,6 +12,10 @@ namespace EmployeeManagement.ViewModels
     {
         [Required]
         [EmailAddress]
+        [Remote(action: "IsEmailInUse", controller: "Account")]
+        //we can aslo use ValidEmailDomainAttribute but it's not necessary
+        //we'll call allowedDomain in the constractor
+        [ValidEmailDomain(allowedDomain:"gmail.com",ErrorMessage = "Email domain must be gmail.com")]
         public string Email { get; set; }
 
         [Required]

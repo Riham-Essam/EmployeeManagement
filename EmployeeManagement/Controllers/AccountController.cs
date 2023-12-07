@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagement.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,13 +23,38 @@ namespace EmployeeManagement.Controllers
             this.signInManager = signInManager;
         }
 
+        [AcceptVerbs("Get","Post")] //can be used as [HttpGet][HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailInUse(string email){
+
+            var user = await userManager.FindByEmailAsync(email);
+
+            if(user == null)
+            {
+                /* We return this JsonResult from this server-side fn bec 
+                 * this asp.net core MVC proj uses JQuery validate method to call this server-side fn
+                 * so JQuery validate method actually issues an Ajax call to this method
+                 * and JQuery validate method expects a json response from this method
+                 * so this is the reason we're returning a json result 
+                 * we're returning json of true as the user is null and we're not havin any validation erros
+                 */
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Email {email} is already in use");
+            }
+        }
+
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -56,6 +82,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
@@ -63,13 +90,15 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +106,15 @@ namespace EmployeeManagement.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    if(!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                   
                 }
 
                 ModelState.AddModelError("", "Invalid Login Attempt");

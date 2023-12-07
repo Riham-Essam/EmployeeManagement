@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagement.Models;
 using EmployeeManagement.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EmployeeManagement.Controllers
 {
 	//[Route("[controller]/[action]")]
+    
     public class HomeController : Controller
     {
         private readonly IEmployeeRepository empRepo;
@@ -25,6 +27,7 @@ namespace EmployeeManagement.Controllers
 		}
 
 		//[Route("{id?}")]
+        [AllowAnonymous]
 		public ViewResult Details(int? id)
         {
             //throw new Exception("/Erorrr!!!");
@@ -47,6 +50,7 @@ namespace EmployeeManagement.Controllers
 
 		//[Route("~/Home")]
 		//[Route("~/")]
+        [AllowAnonymous]
 		public ViewResult Index()
 		{
 			IEnumerable<Employee> model = empRepo.getAllEmployees();
@@ -102,6 +106,7 @@ namespace EmployeeManagement.Controllers
 		}
 
 		[HttpGet]
+        [Authorize]
 		public ViewResult Edit(int id)
 		{
 			Employee employee = empRepo.getEmployee(id);
@@ -119,6 +124,7 @@ namespace EmployeeManagement.Controllers
 		}
 
 		[HttpPost]
+        [Authorize]
 		public IActionResult Edit(EmployeeEditViewModel model)
 		{
 			if (ModelState.IsValid)
