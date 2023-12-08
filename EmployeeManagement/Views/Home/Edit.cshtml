@@ -5,7 +5,7 @@
 	var photoPath = "~/images/" + (Model.ExistingPhotoPath ?? "person.jpg");
 }
 
-<form enctype="multipart/form-data" asp-controller="Home" asp-action="Edit" method="post" class="mt-4">
+<form enctype="multipart/form-data" method="post" class="mt-4">
 
 	<input hidden asp-for="ID" />
 	<input hidden asp-for="ExistingPhotoPath" />

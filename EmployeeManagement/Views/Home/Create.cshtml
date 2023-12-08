@@ -4,8 +4,7 @@
 	ViewBag.Title = "Create Employee";
 }
 
-<form enctype="multipart/form-data" asp-controller="Home" asp-action="Create" method="post" class="mt-4">
-	<div class="mb-3 row">
+<form enctype="multipart/form-data" method="post" class="mt-4">
 		<label asp-for="Name" class="col-sm-2 col-form-label"></label>
 		<div class="col-sm-10">
 			<input asp-for="Name" class="form-control" placeholder="Name" />

@@ -41,8 +41,8 @@ namespace EmployeeManagement.Controllers
 			}
 			HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
 			{
-				employee = empRepo.getEmployee(id??1),
-			    pageTitle = "PageTitle"
+				Employee = empRepo.getEmployee(id??1),
+			    PageTitle = "PageTitle"
 			};
 
             return View(homeDetailsViewModel);
