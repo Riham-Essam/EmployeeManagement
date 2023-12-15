@@ -127,5 +127,90 @@ namespace EmployeeManagement.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditUserInRole(string roleId)
+        {
+            ViewBag.roleId = roleId; //in order not to duplicate the roleID in the viewModel so we kept it in viewBag
+
+            var role = await roleManager.FindByIdAsync(roleId);
+
+            if(role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with ID = {roleId} cannot be found";
+                return View("NotFound");
+            }
+
+            var model = new List<UserRoleViewModel>();
+
+            foreach(var users in userManager.Users)
+            {
+                var userRoleViewModel = new UserRoleViewModel
+                {
+                    UserId = users.Id,
+                    UserName = users.UserName
+                };
+
+                if (await userManager.IsInRoleAsync(users, role.Name))
+                {
+                    userRoleViewModel.IsSelected = true;
+                }
+                else
+                {
+                    userRoleViewModel.IsSelected = false;
+                }
+
+                model.Add(userRoleViewModel);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUserInRole(List<UserRoleViewModel> model , string roleId)
+        {
+            var role = await roleManager.FindByIdAsync(roleId);
+
+            if(role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with ID = {roleId} cannot be found";
+                return View("NotFound");
+            }
+
+
+            for(int i = 0; i < model.Count; i++)
+            {
+                var user = await userManager.FindByIdAsync(model[i].UserId);
+
+                IdentityResult result = null;
+
+                if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user,role.Name)))
+                {
+                    result = await userManager.AddToRoleAsync(user, role.Name);
+                }
+                else if(!(model[i].IsSelected) && (await userManager.IsInRoleAsync(user, role.Name))) {
+
+                    result = await userManager.RemoveFromRoleAsync(user, role.Name);
+                }
+                else
+                {
+                    continue; //To see another user in the user 
+                }
+
+                if (result.Succeeded)
+                {
+                    if(i < model.Count - 1)
+                    {
+                        continue; //This means there is another user in the 1st for loop
+                    }
+                    else
+                    {
+                        return RedirectToAction("EditRole", new { id = roleId });
+                    }
+                }
+            }
+
+            return RedirectToAction("EditRole", new { id = roleId });
+        }
     }
 }
