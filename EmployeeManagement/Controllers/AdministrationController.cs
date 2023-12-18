@@ -221,5 +221,69 @@ namespace EmployeeManagement.Controllers
             var users = userManager.Users;
             return View(users);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditUser(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+
+            if(user == null)
+            {
+                ViewBag.ErrorMessage = $"User with ID = {id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                var roles = await userManager.GetRolesAsync(user);
+                var claims = await userManager.GetClaimsAsync(user);
+
+                var editUserViewModel = new EditUserViewModel
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    City = user.City,
+                    Roles = roles,
+                    Claims = claims.Select(c => c.Value).ToList()
+                };
+
+                return View(editUserViewModel);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
+        {
+            var user = await userManager.FindByIdAsync(model.Id);
+
+            if(user == null)
+            {
+                ViewBag.ErrorMessage = $"User with ID = {model.Id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                user.Id = model.Id;
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+                user.City = model.City;
+
+                var result = await userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListUsers");
+                }
+
+                foreach(var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                return View(model);
+            }
+
+
+        }
     }
 }
