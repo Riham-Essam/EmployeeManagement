@@ -28,9 +28,14 @@
 			</div>
 
 			<div class="card-footer">
-				<a asp-controller="Administration" asp-action="EditUser"
-				   asp-route-Id="@user.Id" class="btn btn-warning" style="width:auto">Edit</a>
-				<a href="#" class="btn btn-danger" style="width:auto">Delete</a>
+				<form asp-action="DeleteUser" method="post" asp-route-Id="@user.Id">
+					<a asp-controller="Administration" asp-action="EditUser"
+					   asp-route-Id="@user.Id" class="btn btn-warning" style="width:auto">Edit</a>
+					<button type="submit" class="btn btn-danger"
+							style="width:auto">
+						Delete
+					</button>
+				</form>
 			</div>
 		</div>
 	}
