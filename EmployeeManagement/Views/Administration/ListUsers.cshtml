@@ -32,7 +32,7 @@
 					<a asp-controller="Administration" asp-action="EditUser"
 					   asp-route-Id="@user.Id" class="btn btn-warning" style="width:auto">Edit</a>
 					<button type="submit" class="btn btn-danger"
-							style="width:auto">
+							style="width:auto" onclick="return confirm('Are you sure to delete this user : @user.UserName')">
 						Delete
 					</button>
 				</form>
