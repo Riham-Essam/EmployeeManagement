@@ -13,6 +13,7 @@
 		<script src="~/lib/jquery-validate/jquery.validate.js"></script>
 		<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 		<script src="~/bootstrap/js/bootstrap.bundle.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	</environment>
 
 	<environment exclude="Development">
@@ -92,11 +93,13 @@
 		</nav>
 
 		<div>@RenderBody()</div>
+
+		@if (IsSectionDefined("Scripts"))
+		{
+			@RenderSection("Scripts", required: true)
+		}
 	</div>
 
-	@if (IsSectionDefined("Scripts"))
-	{
-		@RenderSection("Scripts", required: true)
-	}
+	
 </body>
 </html>
