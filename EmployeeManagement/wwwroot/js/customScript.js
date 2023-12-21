@@ -1,16 +1,16 @@
 ﻿function confirmDelete(uniqueID, isDeletedClicked) {
 
-    var deleleUser = 'Delete_' + uniqueID;
+    var deleteSpan = 'Delete_' + uniqueID;
     var confirmDelete = 'ConfirmDelete_' + uniqueID;
 
     if (isDeletedClicked) {
 
-        $('#' + deleleUser).hide();
+        $('#' + deleteSpan).hide();
         $('#' + confirmDelete).show();
 
     } else {
 
-        $('#' + deleleUser).show();
+        $('#' + deleteSpan).show();
         $('#' + confirmDelete).hide();
 
     }

@@ -117,7 +117,7 @@ namespace EmployeeManagement.Controllers
                     }
                     else
                     {
-                        foreach(var errors in result.Errors)
+                        foreach (var errors in result.Errors)
                         {
                             ModelState.AddModelError("", errors.Description);
                         }
@@ -137,7 +137,7 @@ namespace EmployeeManagement.Controllers
 
             var role = await roleManager.FindByIdAsync(roleId);
 
-            if(role == null)
+            if (role == null)
             {
                 ViewBag.ErrorMessage = $"Role with ID = {roleId} cannot be found";
                 return View("NotFound");
@@ -145,7 +145,7 @@ namespace EmployeeManagement.Controllers
 
             var model = new List<UserRoleViewModel>();
 
-            foreach(var users in userManager.Users)
+            foreach (var users in userManager.Users)
             {
                 var userRoleViewModel = new UserRoleViewModel
                 {
@@ -169,28 +169,29 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditUserInRole(List<UserRoleViewModel> model , string roleId)
+        public async Task<IActionResult> EditUserInRole(List<UserRoleViewModel> model, string roleId)
         {
             var role = await roleManager.FindByIdAsync(roleId);
 
-            if(role == null)
+            if (role == null)
             {
                 ViewBag.ErrorMessage = $"Role with ID = {roleId} cannot be found";
                 return View("NotFound");
             }
 
 
-            for(int i = 0; i < model.Count; i++)
+            for (int i = 0; i < model.Count; i++)
             {
                 var user = await userManager.FindByIdAsync(model[i].UserId);
 
                 IdentityResult result = null;
 
-                if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user,role.Name)))
+                if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user, role.Name)))
                 {
                     result = await userManager.AddToRoleAsync(user, role.Name);
                 }
-                else if(!(model[i].IsSelected) && (await userManager.IsInRoleAsync(user, role.Name))) {
+                else if (!(model[i].IsSelected) && (await userManager.IsInRoleAsync(user, role.Name)))
+                {
 
                     result = await userManager.RemoveFromRoleAsync(user, role.Name);
                 }
@@ -201,7 +202,7 @@ namespace EmployeeManagement.Controllers
 
                 if (result.Succeeded)
                 {
-                    if(i < model.Count - 1)
+                    if (i < model.Count - 1)
                     {
                         continue; //This means there is another user in the 1st for loop
                     }
@@ -227,7 +228,7 @@ namespace EmployeeManagement.Controllers
         {
             var user = await userManager.FindByIdAsync(id);
 
-            if(user == null)
+            if (user == null)
             {
                 ViewBag.ErrorMessage = $"User with ID = {id} cannot be found";
                 return View("NotFound");
@@ -256,7 +257,7 @@ namespace EmployeeManagement.Controllers
         {
             var user = await userManager.FindByIdAsync(model.Id);
 
-            if(user == null)
+            if (user == null)
             {
                 ViewBag.ErrorMessage = $"User with ID = {model.Id} cannot be found";
                 return View("NotFound");
@@ -275,7 +276,7 @@ namespace EmployeeManagement.Controllers
                     return RedirectToAction("ListUsers");
                 }
 
-                foreach(var error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }
@@ -291,7 +292,7 @@ namespace EmployeeManagement.Controllers
         {
             var user = await userManager.FindByIdAsync(id);
 
-            if(user == null)
+            if (user == null)
             {
                 ViewBag.ErrorMessage = $"User with ID = {id} cannot be found";
                 return View("NotFound");
@@ -305,13 +306,42 @@ namespace EmployeeManagement.Controllers
                     return RedirectToAction("ListUsers");
                 }
 
-                foreach(var error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }
 
                 return View("ListUsers");
-            }     
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(string id)
+        {
+            var role = await roleManager.FindByIdAsync(id);
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with ID = {id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                var result = await roleManager.DeleteAsync(role);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListRoles");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+
+                return View("ListRoles");
+            }
         }
     }
 }
