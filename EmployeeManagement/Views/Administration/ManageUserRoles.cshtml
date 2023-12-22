@@ -31,7 +31,7 @@
 
 		<div class="card-footer">
 			<button type="submit" asp-route-userId="@userId" class="btn btn-primary" style="width:auto">Update</button>
-			<a asp-action="EditUser" class="btn btn-primary" style="width:auto">Cancel</a>
+			<a asp-action="EditUser" asp-route-id="@userId"class="btn btn-primary" style="width:auto">Cancel</a>
 		</div>
 		</div>
 </form>
