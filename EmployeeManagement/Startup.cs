@@ -34,25 +34,31 @@ namespace EmployeeManagement
                 options.Password.RequiredLength = 10;
                 options.Password.RequiredUniqueChars = 3;
 
-            }).AddEntityFrameworkStores<AppDbContext>();            
-            services.AddMvc( options =>
+            }).AddEntityFrameworkStores<AppDbContext>();
+            services.AddMvc(options =>
+           {
+               var policy = new AuthorizationPolicyBuilder()
+                                .RequireAuthenticatedUser()
+                                .Build();
+               options.Filters.Add(new AuthorizeFilter(policy));
+           }).AddXmlSerializerFormatters();
+            services.AddAuthorization(options =>
             {
-                var policy = new AuthorizationPolicyBuilder()
-                                 .RequireAuthenticatedUser()
-                                 .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            }).AddXmlSerializerFormatters();
-            services.AddAuthorization(options => {
-
-                options.AddPolicy("DeleteRolePolicy", policy =>
-                 policy.RequireClaim("Delete Role","true"));
 
                 options.AddPolicy("EditRolePolicy", policy =>
-                policy.RequireClaim("Edit Role","true"));
+                 policy.RequireAssertion(context =>
+                 context.User.IsInRole("Admin") &&
+                 context.User.HasClaim(cliam => cliam.Type == "Edit Role" && cliam.Value == "true") ||
+                 context.User.IsInRole("Super Admin")
+                ));
+
+                options.AddPolicy("DeleteRolePolicy", policy =>
+                 policy.RequireClaim("Delete Role", "true"));
+
 
                 options.AddPolicy("AdminRolePolicy", policy =>
                 policy.RequireRole("Admin"));
-             });
+            });
 
             services.ConfigureApplicationCookie(options =>
             options.AccessDeniedPath = new PathString("/Administration/AccessDenied"));

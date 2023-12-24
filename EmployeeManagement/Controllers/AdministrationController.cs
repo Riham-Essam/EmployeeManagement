@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EmployeeManagement.Controllers
 {
-    [Authorize(Policy = "AdminRolePolicy")]
+   // [Authorize(Policy = "AdminRolePolicy")]
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
@@ -465,7 +465,7 @@ namespace EmployeeManagement.Controllers
                         ClaimType = claim.Type
                     };
 
-                    if(existingUserClaim.Any(x => x.Type == claim.Type && claim.Value == "true"))
+                    if(existingUserClaim.Any(x => x.Type == claim.Type && x.Value == "true"))
                     {
                         userClaim.IsSelected = true;
                     }
