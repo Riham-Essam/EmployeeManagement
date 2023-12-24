@@ -253,7 +253,7 @@ namespace EmployeeManagement.Controllers
                     Email = user.Email,
                     City = user.City,
                     Roles = roles,
-                    Claims = claims.Select(c => c.Value).ToList()
+                    Claims = claims.Select(c => c.Type + " : " + c.Value).ToList()
                 };
 
                 return View(editUserViewModel);
@@ -465,7 +465,7 @@ namespace EmployeeManagement.Controllers
                         ClaimType = claim.Type
                     };
 
-                    if(existingUserClaim.Any(x => x.Type == claim.Type))
+                    if(existingUserClaim.Any(x => x.Type == claim.Type && claim.Value == "true"))
                     {
                         userClaim.IsSelected = true;
                     }
@@ -498,8 +498,8 @@ namespace EmployeeManagement.Controllers
                     return View(model);
                 }
 
-                result = await userManager.AddClaimsAsync(user, model.Claims.Where(x => x.IsSelected).Select(c => 
-                new Claim(c.ClaimType,c.ClaimType)));
+                result = await userManager.AddClaimsAsync(user, model.Claims.Select(c => 
+                new Claim(c.ClaimType,c.IsSelected ? "true" : "false")));
 
                 if (!result.Succeeded)
                 {

@@ -45,10 +45,10 @@ namespace EmployeeManagement
             services.AddAuthorization(options => {
 
                 options.AddPolicy("DeleteRolePolicy", policy =>
-                 policy.RequireClaim("Delete Role"));
+                 policy.RequireClaim("Delete Role","true"));
 
                 options.AddPolicy("EditRolePolicy", policy =>
-                policy.RequireClaim("Edit Role"));
+                policy.RequireClaim("Edit Role","true"));
 
                 options.AddPolicy("AdminRolePolicy", policy =>
                 policy.RequireRole("Admin"));
