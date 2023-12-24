@@ -45,12 +45,15 @@ namespace EmployeeManagement
             services.AddAuthorization(options =>
             {
 
+                //options.AddPolicy("EditRolePolicy", policy =>
+                // policy.RequireAssertion(context =>
+                // context.User.IsInRole("Admin") &&
+                // context.User.HasClaim(cliam => cliam.Type == "Edit Role" && cliam.Value == "true") ||
+                // context.User.IsInRole("Super Admin")
+                //));
+
                 options.AddPolicy("EditRolePolicy", policy =>
-                 policy.RequireAssertion(context =>
-                 context.User.IsInRole("Admin") &&
-                 context.User.HasClaim(cliam => cliam.Type == "Edit Role" && cliam.Value == "true") ||
-                 context.User.IsInRole("Super Admin")
-                ));
+                policy.RequireAssertion(context => AuthorizeAccess(context)));
 
                 options.AddPolicy("DeleteRolePolicy", policy =>
                  policy.RequireClaim("Delete Role", "true"));
@@ -65,6 +68,14 @@ namespace EmployeeManagement
 
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
         }
+
+
+        private bool AuthorizeAccess(AuthorizationHandlerContext context)
+        {
+            return context.User.IsInRole("Admin") && context.User.HasClaim(c => c.Type == "Edit Role" &&
+            c.Value == "true") || context.User.IsInRole("Super Admin");
+        }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
