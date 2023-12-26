@@ -71,6 +71,12 @@ namespace EmployeeManagement
             services.ConfigureApplicationCookie(options =>
             options.AccessDeniedPath = new PathString("/Administration/AccessDenied"));
 
+            services.AddAuthentication().AddGoogle(options =>
+            {
+                options.ClientId = "1038083089214-v1n248t7h3qg3du3vu4vop05hqujctrd.apps.googleusercontent.com";
+                options.ClientSecret = "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";
+            });
+
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
             services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
             services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
