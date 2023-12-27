@@ -150,6 +150,18 @@ namespace EmployeeManagement.Controllers
 			return View(model);
 		}
 
+        [AcceptVerbs("Get","Delete")]
+        [Authorize]
+        public IActionResult Delete(int ID)
+        {
+            if (ModelState.IsValid)
+            {
+                Employee emp = empRepo.Delete(ID);
+                return RedirectToAction("Index");
+            }
+
+            return View("Index");
+        }
 	}
 
 }
