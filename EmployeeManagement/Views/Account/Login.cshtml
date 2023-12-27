@@ -11,8 +11,7 @@
 		<form method="post">
 			<h1>Local Account Login</h1>
 			<hr />
-			<div asp-validation-for="All" class="text-danger"></div>
-
+			<div asp-validation-summary="All" class="text-danger"></div>
 			<div class="mb-3">
 				<label asp-for="Email" class="form-label"></label>
 				<input asp-for="Email" class="form-control" />
