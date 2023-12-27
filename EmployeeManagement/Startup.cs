@@ -73,8 +73,8 @@ namespace EmployeeManagement
 
             services.AddAuthentication().AddGoogle(options =>
             {
-                options.ClientId = "1038083089214-v1n248t7h3qg3du3vu4vop05hqujctrd.apps.googleusercontent.com";
-                options.ClientSecret = "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";
+                options.ClientId = "XXXXXXXX";
+                options.ClientSecret = "XXXXXXXX";
             });
 
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
