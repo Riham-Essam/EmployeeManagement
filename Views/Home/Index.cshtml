@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Employee>
+
+@{
+	ViewBag.Title = "Employees Details";
+}
+
+@section Scripts
+	{
+	<script src="~/js/customScript.js"></script>
+}
+
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+	@foreach (var emp in Model)
+	{
+		var photoPath = "~/images/" + (emp.PhotoPath ?? "person.jpg");
+		<div class="col">
+			<div class="card h-100">
+				<img class="card-img-top" src=@photoPath alt="Employee Image" asp-append-version="true">
+				<div class="card-body text-center">
+					<h5 class="card-title">@emp.Name</h5>
+				</div>
+				<div class="card-footer text-center">
+					<a asp-controller="Home" asp-action="Details" asp-route-ID="@emp.ID"
+					   class="btn btn-primary m-1">View</a>
+					<a asp-controller="Home" asp-action="Edit" asp-route-ID="@emp.ID" class="btn btn-warning m-1">Edit</a>
+					<a asp-action="Delete" asp-route-ID="@emp.ID" class="btn btn-danger m-1">Delete</a>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+
