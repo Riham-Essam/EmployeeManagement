@@ -324,7 +324,7 @@ namespace EmployeeManagement.Controllers
                 {
                     var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-                    var passwordResetLink = Url.Action("ResetPasword", "Account",
+                    var passwordResetLink = Url.Action("ResetPassword", "Account",
                         new { email = model.Email, token = token }, Request.Scheme);
 
                     logger.Log(LogLevel.Warning, passwordResetLink);
@@ -334,6 +334,48 @@ namespace EmployeeManagement.Controllers
 
 
                 return View("ForgotPasswordConfirmation"); //To avoid hacking
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string email , string token)
+        {
+            if(email == null || token == null)
+            {
+                ModelState.AddModelError("", "Invalid password reset token");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    var result = await userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+                    if (result.Succeeded)
+                    {
+                        return View("ResetPasswordConfirmation");
+                    }
+
+                    foreach(var errors in result.Errors)
+                    {
+                        ModelState.AddModelError("", errors.Description);
+                    }
+                    return View(model);
+                }
+
+                return View("ResetPasswordConfirmation"); //To avoid hacking
             }
 
             return View(model);
