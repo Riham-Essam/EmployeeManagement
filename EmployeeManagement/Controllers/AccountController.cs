@@ -247,6 +247,19 @@ namespace EmployeeManagement.Controllers
                         };
 
                         await userManager.CreateAsync(user);
+
+                        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                            new { userId = user.Id, token = token }, Request.Scheme);
+                        logger.Log(LogLevel.Warning, confirmationLink);
+
+                        ViewBag.Title = "Email Confirmation";
+                        ViewBag.ErrorTitle = "Registartion is successful";
+                        ViewBag.ErrorMessage = "Before you can login, please confirm your" +
+                            " email, by clicking on the confirmation link we have emailed you";
+
+                        return View("Error");
+
                     }
 
                     //add a login (insert a row for the user in AspNetUserLogins table)
