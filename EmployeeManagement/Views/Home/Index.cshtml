@@ -21,7 +21,7 @@
 					<h5 class="card-title">@emp.Name</h5>
 				</div>
 				<div class="card-footer text-center">
-					<a asp-controller="Home" asp-action="Details" asp-route-ID="@emp.ID"
+					<a asp-controller="Home" asp-action="Details" asp-route-ID="@emp.EncryptedId"
 					   class="btn btn-primary m-1">View</a>
 					<a asp-controller="Home" asp-action="Edit" asp-route-ID="@emp.ID" class="btn btn-warning m-1">Edit</a>
 					<a asp-action="Delete" asp-route-ID="@emp.ID" class="btn btn-danger m-1">Delete</a>

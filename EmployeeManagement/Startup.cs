@@ -89,6 +89,7 @@ namespace EmployeeManagement
             options.TokenLifespan = TimeSpan.FromHours(5));
             services.Configure<CustomEmailConfirmationTokenProviderOptions>(options =>
             options.TokenLifespan = TimeSpan.FromDays(3));
+            services.AddSingleton<DataProtectionPurposeStrings>();
         }
 
 

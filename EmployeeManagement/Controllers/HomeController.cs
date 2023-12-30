@@ -4,11 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagement.Models;
+using EmployeeManagement.Security;
 using EmployeeManagement.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace EmployeeManagement.Controllers
 {
@@ -19,29 +22,39 @@ namespace EmployeeManagement.Controllers
         private readonly IEmployeeRepository empRepo;
 
 		public IHostingEnvironment HostingEnv;
+        private readonly ILogger<HomeController> logger;
+        private readonly IDataProtector protector;
 
-		public HomeController(IEmployeeRepository _empRepo, IHostingEnvironment hostingEnv)
+
+		public HomeController(IEmployeeRepository _empRepo, IHostingEnvironment hostingEnv,
+                              ILogger<HomeController> logger, IDataProtectionProvider dataProtectionProvider,
+                              DataProtectionPurposeStrings dataProtectionPurposeStrings)
         {
             empRepo = _empRepo;
 			HostingEnv = hostingEnv;
-		}
+            this.logger = logger;
+            protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.EmployeeIdRouteValue);
+        }
 
 		//[Route("{id?}")]
         [AllowAnonymous]
-		public ViewResult Details(int? id)
+		public ViewResult Details(string id)
         {
             //throw new Exception("/Erorrr!!!");
 
-			Employee employee = empRepo.getEmployee(id.Value);
+            int empID = Convert.ToInt32(protector.Unprotect(id));
+
+			Employee employee = empRepo.getEmployee(empID);
 			if(employee == null)
 			{
 				Response.StatusCode = 404;
-				return View("EmployeeNotFound", id.Value);
+				return View("EmployeeNotFound", empID);
 
 			}
+
 			HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
 			{
-				Employee = empRepo.getEmployee(id??1),
+				Employee = empRepo.getEmployee(empID),
 			    PageTitle = "PageTitle"
 			};
 
@@ -53,7 +66,12 @@ namespace EmployeeManagement.Controllers
         [AllowAnonymous]
 		public ViewResult Index()
 		{
-			IEnumerable<Employee> model = empRepo.getAllEmployees();
+            IEnumerable<Employee> model = empRepo.getAllEmployees().Select(e =>
+            {
+                e.EncryptedId = protector.Protect(e.ID.ToString());
+                return e;
+            });
+
 			return View(model);
 		}
 
