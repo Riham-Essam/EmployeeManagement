@@ -52,20 +52,21 @@
 						<a class="nav-link" asp-controller="Home" asp-action="Create">Create</a>
 					</li>
 
-					@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-					{
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" id="dropDownMenuLink"
-							   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								Manage
-							</a>
+					@*@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+		{*@
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="dropDownMenuLink"
+						   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Manage
+						</a>
 
-							<div class="dropdown-menu" aria-labelledby="dropDownMenuLink">
-								<a class="dropdown-item" asp-controller="Administration" asp-action="ListRoles">Roles</a>
-								<a class="dropdown-item" asp-controller="Administration" asp-action="ListUsers">Users</a>
-							</div>
-						</li>
-					}
+						<div class="dropdown-menu" aria-labelledby="dropDownMenuLink">
+							<a class="dropdown-item" asp-controller="Administration" asp-action="ListRoles">Roles</a>
+							<a class="dropdown-item" asp-controller="Administration" asp-action="ListUsers">Users</a>
+							<a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
+						</div>
+					</li>
+					@*}*@
 				</ul>
 
 				<ul class="navbar-nav ms-auto">

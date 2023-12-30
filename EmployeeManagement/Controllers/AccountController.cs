@@ -380,5 +380,42 @@ namespace EmployeeManagement.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.GetUserAsync(User);
+
+                if(user == null)
+                {
+                    return View("Login");
+                }
+
+                var result = await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    foreach(var errors in result.Errors)
+                    {
+                        ModelState.AddModelError("", errors.Description);
+                    }
+
+                    return View();
+                }
+
+                await signInManager.RefreshSignInAsync(user);
+                return View("ChangePasswordConfirmation");
+            }
+
+            return View(model);
+        }
     }
 }
